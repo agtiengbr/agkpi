@@ -1,0 +1,140 @@
+.agkpis-panel {
+    margin-top: 16px;
+}
+
+.agkpis-panel-header {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.agkpis-panel-header h3 {
+    margin: 0;
+}
+
+.agkpis-color-chip {
+    border-radius: 999px;
+    display: inline-block;
+    font-weight: 600;
+    padding: 6px 10px;
+}
+
+.agkpis-orders-panel {
+    margin-top: 16px;
+}
+
+.agkpis-orders-panel .card-header {
+    align-items: center;
+    display: flex;
+}
+
+.agkpis-orders-panel__row {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.agkpis-card-link {
+    color: inherit;
+    display: block;
+    text-decoration: none !important;
+}
+
+.agkpis-card-link:hover,
+.agkpis-card-link:focus {
+    color: inherit;
+    outline: none;
+    text-decoration: none !important;
+}
+
+.agkpis-card-link *,
+.agkpis-card-link:hover *,
+.agkpis-card-link:focus * {
+    text-decoration: none !important;
+}
+
+.agkpis-card {
+    background: var(--agkpis-bg);
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+    color: var(--agkpis-text);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 144px;
+    padding: 16px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.agkpis-card-link:hover .agkpis-card,
+.agkpis-card-link:focus .agkpis-card {
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.agkpis-card__head {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.agkpis-card__title {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.agkpis-card__subtitle {
+    font-size: 12px;
+    opacity: 0.86;
+    text-transform: uppercase;
+}
+
+.agkpis-card__stats {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.agkpis-card__stat {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+    min-width: 0;
+    padding: 10px 12px;
+}
+
+.agkpis-card__label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+    opacity: 0.8;
+    text-transform: uppercase;
+}
+
+.agkpis-card__value {
+    display: block;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 1199px) {
+    .agkpis-card__stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    .agkpis-panel-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .agkpis-card__stats {
+        grid-template-columns: 1fr;
+    }
+}
