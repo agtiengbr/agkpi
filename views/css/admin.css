@@ -22,18 +22,41 @@
 }
 
 .agkpis-orders-panel {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
     margin-top: 16px;
+    overflow: hidden;
 }
 
-.agkpis-orders-panel .card-header {
+.agkpis-orders-panel__header {
     align-items: center;
+    border-bottom: 1px solid #ddd;
     display: flex;
+    padding: 16px 20px;
+}
+
+.agkpis-orders-panel__title {
+    color: #363a41;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.agkpis-orders-panel__body {
+    padding: 16px 20px;
 }
 
 .agkpis-orders-panel__row {
     display: grid;
     gap: 12px;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.agkpis-orders-panel__row > * {
+    min-width: 0;
 }
 
 .agkpis-card-link {

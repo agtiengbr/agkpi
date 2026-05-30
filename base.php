@@ -21,13 +21,14 @@ class BaseAgKpis extends \Module
 
         $this->displayName = 'AG KPIs';
         $this->description = 'Exibe KPIs personalizados acima da lista de pedidos.';
-        $this->ps_versions_compliancy = ['min' => '8.0.0', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '1.7.8.0', 'max' => _PS_VERSION_];
     }
 
     public function install()
     {
         return parent::install()
             && $this->installDatabase()
+            && $this->ensureHookExists('actionOrdersKpiRowModifier')
             && $this->registerHook('displayBackOfficeHeader')
             && $this->registerHook('actionOrdersKpiRowModifier');
     }
@@ -57,8 +58,10 @@ class BaseAgKpis extends \Module
     {
         $controller = (string) \Tools::getValue('controller');
         $configure = (string) \Tools::getValue('configure');
+        $requestUri = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '';
+        $isOrdersPage = $controller === 'AdminOrders' || strpos($requestUri, '/sell/orders') !== false;
 
-        if ($controller !== 'AdminOrders' && $configure !== $this->name) {
+        if (!$isOrdersPage && $configure !== $this->name) {
             return;
         }
 
@@ -100,6 +103,16 @@ class BaseAgKpis extends \Module
         return $this->trans('KPIs personalizados', [], 'Modules.Agkpis.Admin');
     }
 
+    public function getOrdersInlineCss()
+    {
+        return $this->getAssetContent('views/css/admin.css');
+    }
+
+    public function getOrdersInlineJs()
+    {
+        return $this->getAssetContent('views/js/admin.js');
+    }
+
     public function getOrdersFilterUrl(array $definition)
     {
         $fromDate = date('Y-m-d', strtotime('-' . max(0, ((int) $definition['period_days']) - 1) . ' days'));
@@ -129,6 +142,37 @@ class BaseAgKpis extends \Module
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4;';
 
         return \Db::getInstance()->execute($sql);
+    }
+
+    private function ensureHookExists($hookName)
+    {
+        if (\Hook::getIdByName($hookName, true, true)) {
+            return true;
+        }
+
+        $hook = new \Hook();
+        $hook->name = pSQL($hookName);
+        $hook->title = pSQL($hookName);
+        $hook->position = true;
+
+        if (!$hook->add()) {
+            return false;
+        }
+
+        return (bool) \Hook::getIdByName($hookName, true, true);
+    }
+
+    private function getAssetContent($relativePath)
+    {
+        $path = $this->local_path . ltrim($relativePath, '/');
+
+        if (!is_file($path) || !is_readable($path)) {
+            return '';
+        }
+
+        $content = file_get_contents($path);
+
+        return $content === false ? '' : $content;
     }
 
     private function uninstallDatabase()
@@ -704,6 +748,8 @@ class AgKpisOrdersCard implements \PrestaShop\PrestaShop\Core\Kpi\KpiInterface
 
     public function render()
     {
+        static $assetsRendered = false;
+
         $currency = new \Currency((int) \Configuration::get('PS_CURRENCY_DEFAULT'));
         $title = \Tools::safeOutput($this->definition['title']);
         $backgroundColor = \Tools::safeOutput($this->definition['background_color']);
@@ -732,7 +778,24 @@ class AgKpisOrdersCard implements \PrestaShop\PrestaShop\Core\Kpi\KpiInterface
             ],
         ];
 
-        $html = '<a class="agkpis-card-link" href="' . $filterUrl . '" data-panel-title="' . $panelTitle . '">';
+        $html = '';
+
+        if (!$assetsRendered) {
+            $inlineCss = $this->module->getOrdersInlineCss();
+            $inlineJs = $this->module->getOrdersInlineJs();
+
+            if ($inlineCss !== '') {
+                $html .= '<style>' . $inlineCss . '</style>';
+            }
+
+            if ($inlineJs !== '') {
+                $html .= '<script>' . $inlineJs . '</script>';
+            }
+
+            $assetsRendered = true;
+        }
+
+        $html .= '<a class="agkpis-card-link" href="' . $filterUrl . '" data-panel-title="' . $panelTitle . '">';
         $html .= '<div class="agkpis-card" style="--agkpis-bg:' . $backgroundColor . ';--agkpis-text:' . $textColor . ';">';
         $html .= '<div class="agkpis-card__head">';
         $html .= '<div class="agkpis-card__title">' . $title . '</div>';
