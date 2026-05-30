@@ -69,6 +69,20 @@
     });
   }
 
+  function moveCardToPanel(item, targetRow) {
+    var card = getCardLink(item);
+
+    if (!card) {
+      return;
+    }
+
+    targetRow.appendChild(card);
+
+    if (card !== item && item.parentNode && !getCardLink(item)) {
+      item.parentNode.removeChild(item);
+    }
+  }
+
   function ensureOrdersPanel(anchor, panelTitle) {
     var panel = document.querySelector('.agkpis-orders-panel');
     var title;
@@ -138,7 +152,7 @@
     }
 
     sourceItems.forEach(function (item) {
-      targetRow.appendChild(item);
+      moveCardToPanel(item, targetRow);
     });
   }
 
